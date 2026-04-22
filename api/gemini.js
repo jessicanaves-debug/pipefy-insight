@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   try {
     const { contents, system_instruction } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
     const payload = { contents, generationConfig: { temperature: 0.3, maxOutputTokens: 2048 } };
     if (system_instruction) payload.system_instruction = { parts: [{ text: system_instruction }] };
     const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });

@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
   try {
     const { contents, system_instruction } = req.body;
-    const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = "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";
 
     // Converte formato Gemini para OpenRouter/OpenAI
     const messages = [];

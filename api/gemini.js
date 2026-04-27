@@ -8,20 +8,24 @@ export default async function handler(req, res) {
     const { messages } = req.body;
     const apiKey = "AIzaSyBU0L8sGcnPzToWB7g0Yf10vo1-xALIg6w";
 
-    // Converte mensagens para formato Gemini
     const systemMsg = messages.find(m => m.role === 'system');
     const userMsgs = messages.filter(m => m.role !== 'system');
-    
+
     const contents = userMsgs.map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }]
     }));
 
-    const payload = { contents, generationConfig: { temperature: 0.3, maxOutputTokens: 2048 } };
-    if (systemMsg) payload.system_instruction = { parts: [{ text: systemMsg.content }] };
+    const payload = {
+      contents,
+      generationConfig: { temperature: 0.3, maxOutputTokens: 2048 }
+    };
+    if (systemMsg) {
+      payload.system_instruction = { parts: [{ text: systemMsg.content }] };
+    }
 
-    const url = \`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=\${apiKey}\`;
-    
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -222,7 +222,7 @@ let tableData = [];
 let chatHistory = [];
 
 const BASE = '';
-const OPENROUTER_KEY = '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';
+const OPENROUTER_KEY = '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';
 
 const SYSTEM_PROMPT = `Você é um assistente especializado em análise de tratativas de violação de marca e concorrência no Pipefy. Seu time monitora agressores (infratores) e gera resumos estratégicos das tratativas.
 
@@ -303,25 +303,15 @@ async function callGemini(userMessage, systemPrompt, history) {
     messages.push({ role: 'user', content: userMessage });
   }
 
-  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const res = await fetch('/api/gemini', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENROUTER_KEY}`,
-      'HTTP-Referer': 'https://project-dvupq.vercel.app',
-      'X-Title': 'Pipefy Insight AI'
-    },
-    body: JSON.stringify({
-      model: 'meta-llama/llama-3.1-8b-instruct:free',
-      messages,
-      temperature: 0.3,
-      max_tokens: 2048
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages })
   });
   if (!res.ok) throw new Error(`Erro na IA: ${res.status}`);
   const data = await res.json();
-  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-  return data.choices?.[0]?.message?.content || '';
+  if (data.error) throw new Error(data.error);
+  return data.text || '';
 }
 
 async function analyzeCards() {

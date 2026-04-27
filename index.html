@@ -278,40 +278,39 @@ function extractCardId(str) {
 }
 
 async function fetchCard(token, cardId) {
-  const query = `{card(id:${cardId}){id title labels{name} current_phase{name} phases_history{phase{name} firstTimeIn lastTimeIn} comments{text created_at author{name}} fields{name value}}}`;
-  const res = await fetch(`${BASE}/api/pipefy`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, token })
+  const query = "{card(id:" + cardId + "){id title labels{name} current_phase{name} phases_history{phase{name} firstTimeIn lastTimeIn} comments{text created_at author{name}} fields{name value}}}";
+  const res = await fetch("https://script.google.com/a/macros/branddi.com/s/AKfycbwJaMfyfYJlneFMmo2FJq1WqwhfwvdGrTvtMVWIFlVMnnnX0QK-DKiuUmAGgBqP4Zo5/exec", {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ type: "pipefy", query: query, token: token })
   });
-  if (!res.ok) throw new Error(`Erro ${res.status}`);
+  if (!res.ok) throw new Error("Erro " + res.status);
   const data = await res.json();
   if (data.error) throw new Error(data.error);
   if (data.errors) throw new Error(data.errors[0].message);
-  if (!data.data || !data.data.card) throw new Error('Card não encontrado. Verifique o ID e o token.');
+  if (!data.data || !data.data.card) throw new Error("Card não encontrado. Verifique o ID e o token.");
   return data.data.card;
 }
 
 async function callGemini(userMessage, systemPrompt, history) {
   const messages = [];
-  if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
+  if (systemPrompt) messages.push({ role: "system", content: systemPrompt });
   if (history && history.length > 0) {
     for (const h of history) {
-      messages.push({ role: h.role === 'assistant' ? 'assistant' : 'user', content: h.content });
+      messages.push({ role: h.role === "assistant" ? "assistant" : "user", content: h.content });
     }
   } else {
-    messages.push({ role: 'user', content: userMessage });
+    messages.push({ role: "user", content: userMessage });
   }
-
-  const res = await fetch('/api/gemini', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages })
+  const res = await fetch("https://script.google.com/a/macros/branddi.com/s/AKfycbwJaMfyfYJlneFMmo2FJq1WqwhfwvdGrTvtMVWIFlVMnnnX0QK-DKiuUmAGgBqP4Zo5/exec", {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ type: "gemini", messages: messages })
   });
-  if (!res.ok) throw new Error(`Erro na IA: ${res.status}`);
+  if (!res.ok) throw new Error("Erro na IA: " + res.status);
   const data = await res.json();
   if (data.error) throw new Error(data.error);
-  return data.text || '';
+  return data.text || "";
 }
 
 async function analyzeCards() {

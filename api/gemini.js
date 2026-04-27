@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         'X-Title': 'Pipefy Insight AI'
       },
       body: JSON.stringify({
-        model: 'meta-llama/llama-3.1-8b-instruct:free',
+        model: 'google/gemma-3-4b-it:free',
         messages,
         temperature: 0.3,
         max_tokens: 2048

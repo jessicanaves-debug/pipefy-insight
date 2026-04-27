@@ -281,7 +281,6 @@ async function fetchCard(token, cardId) {
   const query = "{card(id:" + cardId + "){id title labels{name} current_phase{name} phases_history{phase{name} firstTimeIn lastTimeIn} comments{text created_at author{name}} fields{name value}}}";
   const res = await fetch("https://script.google.com/macros/s/AKfycbzPw99Al9KmwY7l5DIwZ9nyNtBwWdTBDKypUbK3JkSFUf1cRqzXVehxkeLL8mi9k4e9AA/exec", {
     method: "POST",
-    headers: { "Content-Type": "text/plain" },
     body: JSON.stringify({ type: "pipefy", query: query, token: token })
   });
   if (!res.ok) throw new Error("Erro " + res.status);
@@ -304,7 +303,6 @@ async function callGemini(userMessage, systemPrompt, history) {
   }
   const res = await fetch("https://script.google.com/macros/s/AKfycbzPw99Al9KmwY7l5DIwZ9nyNtBwWdTBDKypUbK3JkSFUf1cRqzXVehxkeLL8mi9k4e9AA/exec", {
     method: "POST",
-    headers: { "Content-Type": "text/plain" },
     body: JSON.stringify({ type: "gemini", messages: messages })
   });
   if (!res.ok) throw new Error("Erro na IA: " + res.status);

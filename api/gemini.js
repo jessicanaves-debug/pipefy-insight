@@ -6,27 +6,31 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
   try {
     const { messages } = req.body;
-    const apiKey = "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";
+    const apiKey = "AIzaSyBU0L8sGcnPzToWB7g0Yf10vo1-xALIg6w";
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    // Converte mensagens para formato Gemini
+    const systemMsg = messages.find(m => m.role === 'system');
+    const userMsgs = messages.filter(m => m.role !== 'system');
+    
+    const contents = userMsgs.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
+
+    const payload = { contents, generationConfig: { temperature: 0.3, maxOutputTokens: 2048 } };
+    if (systemMsg) payload.system_instruction = { parts: [{ text: systemMsg.content }] };
+
+    const url = \`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=\${apiKey}\`;
+    
+    const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://project-dvupq.vercel.app',
-        'X-Title': 'Pipefy Insight AI'
-      },
-      body: JSON.stringify({
-        model: 'google/gemma-3-4b-it:free',
-        messages,
-        temperature: 0.3,
-        max_tokens: 2048
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
     if (data.error) throw new Error(data.error.message);
-    const text = data.choices?.[0]?.message?.content || '';
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     return res.status(200).json({ text });
   } catch (err) {
     return res.status(500).json({ error: err.message });

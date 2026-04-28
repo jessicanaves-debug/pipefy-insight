@@ -1,263 +1,148 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pipefy Insight AI</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #13161e;
-    --surface2: #1a1e28;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.13);
-    --accent: #00e5a0;
-    --accent2: #0066ff;
-    --text: #f0f2f7;
-    --muted: #7a8399;
-    --danger: #ff4d6d;
-    --teal-dark: #004d40;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; min-height: 100vh; line-height: 1.6; }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
-    background-size: 40px 40px; pointer-events: none; z-index: 0;
-  }
-  .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
-  nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
-  .nav-logo { display: flex; align-items: center; gap: 10px; }
-  .nav-logo-icon { width: 34px; height: 34px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-  .nav-logo-icon svg { width: 18px; height: 18px; fill: #0d0f14; }
-  .nav-logo span { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 600; letter-spacing: -0.02em; }
-  .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color .2s; }
-  .nav-links a:hover { color: var(--text); }
-  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
-  @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-  .card + .card { margin-top: 16px; }
-  .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-  .card-head-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(0,229,160,0.1); display: flex; align-items: center; justify-content: center; }
-  .card-head-icon svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 2; }
-  .card-head h2 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; }
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
-  .input-wrap { position: relative; }
-  .input-wrap input, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 9px 12px; transition: border-color .2s; outline: none; }
-  .input-wrap input { padding-right: 38px; }
-  .input-wrap input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,160,0.08); }
-  .eye-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); padding: 2px; display: flex; align-items: center; transition: color .2s; }
-  .eye-btn:hover { color: var(--text); }
-  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
-  .btn-primary { width: 100%; padding: 11px; background: var(--accent); color: #0d0f14; border: none; border-radius: var(--radius-sm); font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .2s, transform .1s; letter-spacing: -0.01em; margin-top: 4px; }
-  .btn-primary:hover { opacity: .9; }
-  .btn-primary:active { transform: scale(.99); }
-  .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-  .how-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
-  .how-num { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border2); background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
-  .how-item strong { font-size: 13px; display: block; font-weight: 500; }
-  .how-item span { font-size: 12px; color: var(--muted); }
-  .right-panel { display: flex; flex-direction: column; gap: 16px; }
-  .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .result-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px; }
-  .result-header-left { display: flex; align-items: center; gap: 8px; }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #3a4055; flex-shrink: 0; transition: background .4s; }
-  .result-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; }
-  .badge-label { font-size: 10px; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; }
-  .action-btn { font-size: 12px; padding: 5px 12px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); cursor: pointer; color: var(--muted); display: flex; align-items: center; gap: 5px; transition: border-color .2s, color .2s; }
-  .action-btn:hover { color: var(--text); }
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; }
-  thead { background: var(--teal-dark); }
-  th { padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgba(255,255,255,0.7); white-space: nowrap; }
-  td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text); vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  .obs-cell { font-size: 11px; color: var(--muted); max-width: 220px; line-height: 1.5; }
-  .icon-check { color: var(--accent); font-size: 16px; }
-  .icon-x { color: var(--danger); font-size: 16px; }
-  .result-footer { padding: 8px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
-  .empty { padding: 48px 20px; text-align: center; color: var(--muted); font-size: 13px; }
-  .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: .4; }
-  .chat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; }
-  .chat-header { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
-  .chat-icon { width: 30px; height: 30px; background: rgba(0,102,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-  .chat-icon svg { width: 14px; height: 14px; stroke: var(--accent2); fill: none; stroke-width: 2; }
-  .chat-header-text h3 { font-size: 13px; font-weight: 500; }
-  .chat-header-text p { font-size: 11px; color: var(--muted); }
-  .chat-messages { padding: 16px 20px; min-height: 160px; max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-  .msg { padding: 9px 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; max-width: 88%; }
-  .msg.user { background: var(--accent2); color: white; align-self: flex-end; border-bottom-right-radius: 3px; }
-  .msg.ai { background: var(--surface2); color: var(--text); align-self: flex-start; border-bottom-left-radius: 3px; }
-  .msg.ai.typing { color: var(--muted); font-style: italic; }
-  .chat-input-area { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
-  .chat-input-area input { flex: 1; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 9px 12px; outline: none; transition: border-color .2s; }
-  .chat-input-area input:focus { border-color: var(--accent2); }
-  .send-btn { width: 36px; height: 36px; background: var(--accent2); border: none; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity .2s; flex-shrink: 0; }
-  .send-btn:hover { opacity: .85; }
-  .send-btn:disabled { opacity: .35; cursor: not-allowed; }
-  .send-btn svg { width: 14px; height: 14px; stroke: white; fill: none; stroke-width: 2; }
-  .error-box { background: rgba(255,77,109,0.08); border: 1px solid rgba(255,77,109,0.3); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 12px; color: #ff8fa3; margin-top: 10px; display: none; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; min-height: 100vh; display: flex; flex-direction: column; }
+  header { background: #1a1d27; border-bottom: 1px solid #2a2d3a; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 18px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 10px; }
+  header h1 span { background: #00c07f; color: #000; border-radius: 6px; padding: 4px 8px; font-size: 14px; font-weight: 700; }
+  header a { color: #00c07f; text-decoration: none; font-size: 13px; }
+  .main { display: flex; flex: 1; gap: 0; }
+  .sidebar { width: 320px; min-width: 280px; background: #1a1d27; border-right: 1px solid #2a2d3a; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .sidebar h2 { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .input-group { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  input, textarea { background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px; color: #e0e0e0; padding: 10px 12px; font-size: 13px; width: 100%; outline: none; transition: border 0.2s; font-family: inherit; }
+  input:focus, textarea:focus { border-color: #00c07f; }
+  textarea { resize: vertical; min-height: 100px; }
+  .token-wrap { position: relative; }
+  .token-wrap input { padding-right: 36px; }
+  .token-wrap button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #888; cursor: pointer; font-size: 16px; }
+  .btn-primary { background: #00c07f; color: #000; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-primary:hover { background: #00a86b; }
+  .btn-primary:disabled { background: #2a2d3a; color: #555; cursor: not-allowed; }
+  .error-box { background: #2d1a1a; border: 1px solid #ff4444; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #ff6b6b; }
+  .how-it-works { background: #13151f; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .step { display: flex; gap: 10px; align-items: flex-start; }
+  .step-num { background: #00c07f22; color: #00c07f; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .step-text strong { display: block; font-size: 13px; color: #e0e0e0; }
+  .step-text span { font-size: 12px; color: #666; }
+  .content { flex: 1; display: flex; flex-direction: column; }
+  .table-section { flex: 1; padding: 20px; border-bottom: 1px solid #2a2d3a; overflow: auto; }
+  .table-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .table-header h2 { font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff4444; }
+  .status-dot.active { background: #00c07f; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .table-actions { display: flex; gap: 8px; }
+  .btn-sm { background: #1a1d27; border: 1px solid #2a2d3a; color: #e0e0e0; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+  .btn-sm:hover { border-color: #00c07f; color: #00c07f; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #00c07f; color: #000; padding: 10px 12px; text-align: left; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 10px 12px; border-bottom: 1px solid #1e2130; vertical-align: top; }
+  tr:hover td { background: #1a1d2780; }
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #444; gap: 8px; }
+  .empty-state svg { opacity: 0.3; }
+  .chat-section { height: 320px; display: flex; flex-direction: column; }
+  .chat-header { padding: 14px 20px; border-bottom: 1px solid #2a2d3a; display: flex; align-items: center; gap: 10px; }
+  .chat-header h3 { font-size: 14px; font-weight: 600; }
+  .chat-header p { font-size: 12px; color: #666; }
+  .chat-icon { background: #1a3a5c; border-radius: 8px; padding: 6px; color: #4a9eff; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { display: flex; gap: 10px; }
+  .msg.user { flex-direction: row-reverse; }
+  .msg-bubble { background: #1a1d27; border-radius: 10px; padding: 10px 14px; font-size: 13px; max-width: 80%; line-height: 1.5; }
+  .msg.user .msg-bubble { background: #00c07f22; border: 1px solid #00c07f44; }
+  .msg-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  .msg-avatar.ai { background: #1a3a5c; color: #4a9eff; }
+  .msg-avatar.user { background: #00c07f22; color: #00c07f; }
+  .chat-input-wrap { padding: 12px 20px; border-top: 1px solid #2a2d3a; display: flex; gap: 8px; }
+  .chat-input-wrap input { flex: 1; }
+  .btn-send { background: #00c07f; border: none; border-radius: 8px; padding: 10px 14px; color: #000; cursor: pointer; font-size: 16px; }
+  .btn-send:hover { background: #00a86b; }
+  .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff30; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .spin { display: inline-block; animation: spin .8s linear infinite; }
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+  .check { color: #00c07f; font-weight: 700; }
+  .cross { color: #ff4444; font-weight: 700; }
+  .reincidente { color: #ffa500; font-weight: 600; font-size: 11px; }
 </style>
 </head>
 <body>
-<div class="wrapper">
-  <nav>
-    <div class="nav-logo">
-      <div class="nav-logo-icon">
-        <svg viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-      </div>
-      <span>Pipefy Insight AI</span>
-    </div>
-    <div class="nav-links">
-      <a href="https://app.pipefy.com" target="_blank">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Abrir Pipefy
-      </a>
-    </div>
-  </nav>
-
-  <div class="layout">
-    <div>
-      <div class="card">
-        <div class="card-head">
-          <div class="card-head-icon">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </div>
-          <h2>Analisar Card</h2>
-        </div>
-        <div class="field">
-          <label>Seu Token Pipefy</label>
-          <div class="input-wrap">
-            <input type="password" id="token" placeholder="Cole seu token aqui" />
-            <button class="eye-btn" onclick="toggleToken()">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Links ou IDs dos Cards (um por linha, máx 10)</label>
-          <textarea id="cardLinks" placeholder="https://app.pipefy.com/open-cards/1016482707"></textarea>
-        </div>
-        <button class="btn-primary" id="analyzeBtn" onclick="analyzeCards()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          Iniciar Análise em Massa
-        </button>
-        <div class="error-box" id="errorBox"></div>
-      </div>
-
-      <div class="card">
-        <div style="font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;">Como funciona</div>
-        <div class="how-item"><div class="how-num">1</div><div><strong>Histórico completo</strong><span>Lê todos os comentários, etiquetas e fases do card</span></div></div>
-        <div class="how-item"><div class="how-num">2</div><div><strong>Análise inteligente</strong><span>IA identifica agressores, notificações e retornos</span></div></div>
-        <div class="how-item"><div class="how-num">3</div><div><strong>Observação estratégica</strong><span>Resumo até 200 caracteres com o estilo do seu time</span></div></div>
-        <div class="how-item"><div class="how-num">4</div><div><strong>Chat com IA</strong><span>Pergunte sobre qualquer card analisado</span></div></div>
+<header>
+  <h1><span>⚡</span> Pipefy Insight AI</h1>
+  <a href="https://app.pipefy.com" target="_blank">↗ Abrir Pipefy</a>
+</header>
+<div class="main">
+  <div class="sidebar">
+    <h2>Analisar Card</h2>
+    <div class="input-group">
+      <label>Seu Token Pipefy</label>
+      <div class="token-wrap">
+        <input type="password" id="token" placeholder="Cole seu token aqui...">
+        <button onclick="toggleToken()" title="Mostrar/ocultar">👁</button>
       </div>
     </div>
-
-    <div class="right-panel">
-      <div class="result-card">
-        <div class="result-header">
-          <div class="result-header-left">
-            <div class="status-dot" id="statusDot"></div>
-            <span class="result-title">Tratativas em Andamento</span>
-            <span class="badge-label" id="badgeLabel"></span>
-          </div>
-          <div>
-            <button class="action-btn" onclick="copyTablePPT()">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              Copiar para Slides
-            </button>
-            <button class="action-btn" onclick="copyTable()">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-              Copiar Tabela
-            </button>
-          </div>
+    <div class="input-group">
+      <label>Links ou IDs dos Cards (um por linha, máx 10)</label>
+      <textarea id="cards" placeholder="https://app.pipefy.com/open-cards/123456&#10;https://app.pipefy.com/open-cards/789012"></textarea>
+    </div>
+    <button class="btn-primary" id="btn-analyze" onclick="analyze()">
+      <span>⚡</span> Iniciar Análise em Massa
+    </button>
+    <div id="error-box" class="error-box" style="display:none"></div>
+    <div class="how-it-works">
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Histórico completo</strong><span>Lê todos os comentários, etiquetas e fases</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Análise inteligente</strong><span>IA identifica agressores, notificações e retornos</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Observação estratégica</strong><span>Resumo até 200 caracteres com o estilo do seu time</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Chat com IA</strong><span>Pergunte sobre qualquer card analisado</span></div></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="table-section">
+      <div class="table-header">
+        <h2><span class="status-dot" id="status-dot"></span> Tratativas em Andamento</h2>
+        <div class="table-actions">
+          <button class="btn-sm" onclick="copyForSlides()">📊 Copiar para Slides</button>
+          <button class="btn-sm" onclick="copyTable()">📋 Copiar Tabela</button>
         </div>
-        <div id="tableArea">
-          <div class="empty">
-            <div class="empty-icon">📋</div>
-            Cole o link de um card e clique em analisar para gerar o resumo da tratativa.
-          </div>
-        </div>
-        <div class="result-footer" id="tableFooter" style="display:none;">* Dados gerados automaticamente por IA com base no histórico completo de comentários.</div>
       </div>
-
-      <div class="chat-card">
-        <div class="chat-header">
-          <div class="chat-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <div class="chat-header-text">
-            <h3>Chat com IA</h3>
-            <p>Pergunte sobre os dados dos cards analisados.</p>
-          </div>
+      <div id="table-container">
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="3"/></svg>
+          <p>Nenhum card analisado ainda.</p>
+          <p style="font-size:12px">Cole os links e clique em Iniciar Análise</p>
         </div>
-        <div class="chat-messages" id="chatMessages">
-          <div style="text-align:center;padding:28px 0;color:var(--muted);font-size:12px;">Nenhuma mensagem ainda. Comece perguntando algo sobre os cards!</div>
+      </div>
+    </div>
+    <div class="chat-section">
+      <div class="chat-header">
+        <div class="chat-icon">💬</div>
+        <div>
+          <h3>Chat com IA</h3>
+          <p>Pergunte sobre os dados dos cards analisados.</p>
         </div>
-        <div class="chat-input-area">
-          <input type="text" id="chatInput" placeholder="Pergunte algo sobre os cards..." onkeydown="if(event.key==='Enter')sendChat()" />
-          <button class="send-btn" id="sendBtn" onclick="sendChat()">
-            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </button>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="empty-state" style="height:80px">
+          <p style="font-size:13px">Nenhuma mensagem ainda. Comece perguntando algo sobre os cards!</p>
         </div>
+      </div>
+      <div class="chat-input-wrap">
+        <input type="text" id="chat-input" placeholder="Pergunte algo sobre os cards..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="btn-send" onclick="sendChat()">➤</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-let analysisContext = '';
-let tableData = [];
-let chatHistory = [];
-
 const BASE = '';
-const OPENROUTER_KEY = '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';
-
-const SYSTEM_PROMPT = `Você é um assistente especializado em análise de tratativas de violação de marca e concorrência no Pipefy. Seu time monitora agressores (infratores) e gera resumos estratégicos das tratativas.
-
-INSTRUÇÕES PARA GERAR A TABELA DE RESUMO:
-
-1. Nome do Agressor: Use o título/nome do card (ex: hortelatricot.com.br).
-
-2. Concorrente (Leilão): Retorne true se a etiqueta "Top Leilão", "Leilão" ou similar estiver ativa no card.
-
-3. Notificações Enviadas: Conte quantas vezes o card foi notificado com base no histórico de fases. Se o número for maior que 10, retorne o número exato (ex: 11, 12) — a exibição será ajustada para "+10" automaticamente. NUNCA mencione "quarentena" nem "ciclo" na observação.
-
-4. Última Notificação: Data do último comentário ou movimentação de fase registrada. Formato DD/MM/AAAA.
-
-5. Resposta: true se existir etiqueta "Respondeu", "Respondido", "Confirmou a negativação" ou similar. Caso contrário, false.
-
-6. Observação (MÁXIMO 200 CARACTERES): Resumo estratégico das tentativas de contato. Deve:
-   - Se o card tiver etiqueta "Reincidente", "Agressor reincidente" ou o histórico mostrar que o caso voltou após já ter sido tratado antes, SEMPRE iniciar com "Agressor reincidente."
-   - Destacar o trabalho realizado
-   - Mencionar os últimos canais utilizados (e-mail, hotline, LinkedIn, etc.)
-   - Indicar se houve retorno
-   - Mencionar período sem ocorrências quando relevante
-   - Se estiver em "Hotline" ou "Prioridade", mencionar como ponto positivo
-   - Usar "Tratativa formal" ou "Notificação de conformidade" quando envolver documentos jurídicos
-   - Escrever corretamente, sem erros ortográficos
-   - NÃO inventar dados — usar apenas informações reais do card
-   - NUNCA mencionar "quarentena", "ciclo" ou número de ciclos
-
-EXEMPLOS DE OBSERVAÇÃO:
-- "Retomamos contato em 04/03 via hotline. Sem retorno, mas ficamos 7 dias sem ocorrências após a ação. Registrada apenas uma infração isolada em 11/03."
-- "Contato realizado via e-mail com hotline de negativação. Trabalho preventivo eficaz: sem novas ocorrências desde 24/02. Seguimos em acompanhamento."
-- "Notificamos via e-mail e LinkedIn, acionando lideranças após falta de efetividade inicial. Sem retorno até o momento. Nova tentativa sendo preparada."
-- "Agressor reincidente. Segunda tentativa de contato via hotline realizada em 16/04/2026. Mantendo monitoramento e aguardando retorno para prosseguimento."
-
-RETORNE SOMENTE JSON VÁLIDO, sem texto extra, sem markdown, sem explicação:
-{"rows":[{"agressor":"nome","concorrente":false,"notificacoes":1,"ultimaNotificacao":"DD/MM/AAAA","resposta":false,"observacao":"texto até 200 caracteres"}]}`;
+let analysisData = [];
+let chatHistory = [];
 
 function toggleToken() {
   const inp = document.getElementById('token');
@@ -265,258 +150,220 @@ function toggleToken() {
 }
 
 function showError(msg) {
-  const el = document.getElementById('errorBox');
-  el.style.display = msg ? 'block' : 'none';
-  el.innerHTML = msg || '';
+  const box = document.getElementById('error-box');
+  box.textContent = msg;
+  box.style.display = msg ? 'block' : 'none';
 }
 
-function extractCardId(str) {
-  const m = str.match(/\/(\d+)\s*$/);
-  if (m) return m[1];
-  const digits = str.trim().replace(/\D/g, '');
-  return digits || null;
-}
-
-async function fetchCard(token, cardId) {
-  const query = "{card(id:" + cardId + "){id title labels{name} current_phase{name} phases_history{phase{name} firstTimeIn lastTimeIn} comments{text created_at author{name}} fields{name value}}}";
+async function callPipefy(query, token) {
   const res = await fetch('/api/pipefy', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query, token })
   });
-  if (!res.ok) throw new Error('Erro ' + res.status);
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
-  if (data.errors) throw new Error(data.errors[0].message);
-  if (!data.data || !data.data.card) throw new Error('Card não encontrado. Verifique o ID e o token.');
-  return data.data.card;
+  if (!res.ok) throw new Error('Erro ao buscar card no Pipefy: ' + res.status);
+  return res.json();
 }
 
-async function callGemini(userMessage, systemPrompt, history) {
-  const messages = [];
-  if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
-  if (history && history.length > 0) {
-    for (const h of history) messages.push({ role: h.role === 'assistant' ? 'assistant' : 'user', content: h.content });
-  } else {
-    messages.push({ role: 'user', content: userMessage });
-  }
+async function callGemini(messages) {
   const res = await fetch('/api/gemini', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages })
   });
   if (!res.ok) throw new Error('Erro na IA: ' + res.status);
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
-  return data.text || '';
+  const d = await res.json();
+  if (d.error) throw new Error(d.error);
+  return d.text;
 }
 
-async function analyzeCards() {
+function extractCardId(input) {
+  const m = input.match(/(\d{6,})/);
+  return m ? m[1] : input.trim();
+}
+
+async function fetchCard(cardId, token) {
+  const query = `{ card(id: "${cardId}") { id title current_phase { name } assignees { name } labels { name } comments { text author_name created_at } phases_history { phase { name } firstTimeIn lastTimeOut duration } } }`;
+  const data = await callPipefy(query, token);
+  if (data.errors) throw new Error(data.errors[0].message);
+  return data.data?.card;
+}
+
+const SYSTEM_PROMPT = `Você é um assistente especializado em análise de tratativas de propriedade intelectual da Branddi. Analise o histórico do card do Pipefy e gere um resumo EXATAMENTE neste formato JSON:
+
+{
+  "agressor": "nome do card/domínio",
+  "concorrente": "Sim" ou "Não" (se tem etiqueta Top Leilão),
+  "notificacoes": número (se > 10, retorne ">10"),
+  "ultimaNotificacao": "DD/MM/AAAA",
+  "resposta": "Sim" ou "Não",
+  "reincidente": true ou false,
+  "observacao": "máximo 200 caracteres"
+}
+
+REGRAS:
+- Nome do agressor: use o título do card
+- Top Leilão/Concorrente: verifique etiquetas
+- Notificações: conte quantas vezes o card passou por fases de quarentena/notificação
+- Última notificação: data do último comentário ou atividade
+- Resposta: "Sim" se houver etiquetas "Respondeu", "Respondido" ou "Confirmou a negativação"
+- Reincidente: true se houver etiqueta "Reincidente" ou histórico de retorno após tratativa anterior
+- Observação (máx 200 chars): resumo estratégico, sem mencionar "quarentena" ou "ciclo". Se reincidente, SEMPRE comece com "Agressor reincidente."
+- Exemplos de observação: "Segunda tentativa via hotline em 16/04. Aguardando retorno. Última ocorrência: 16/04/2026." / "Contato via e-mail institucional. Sem novas ocorrências desde 24/02. Em monitoramento."
+- Retorne APENAS o JSON, sem markdown, sem explicações`;
+
+async function analyzeCard(card) {
+  const cardData = JSON.stringify({
+    titulo: card.title,
+    faseAtual: card.current_phase?.name,
+    etiquetas: card.labels?.map(l => l.name) || [],
+    comentarios: card.comments?.slice(-20).map(c => ({ autor: c.author_name, texto: c.text, data: c.created_at })) || [],
+    historicoFases: card.phases_history?.map(p => ({ fase: p.phase?.name, entrada: p.firstTimeIn, saida: p.lastTimeOut })) || []
+  });
+
+  const text = await callGemini([
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user', content: `Analise este card e retorne o JSON:\n${cardData}` }
+  ]);
+
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+function renderTable() {
+  const container = document.getElementById('table-container');
+  if (!analysisData.length) {
+    container.innerHTML = `<div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="3"/></svg><p>Nenhum card analisado ainda.</p></div>`;
+    return;
+  }
+  const rows = analysisData.map(r => `
+    <tr>
+      <td>${r.agressor || '-'}</td>
+      <td></td>
+      <td>${r.concorrente === 'Sim' ? '<span class="check">✓</span>' : '<span class="cross">✗</span>'}</td>
+      <td>${r.notificacoes || '0'}</td>
+      <td>${r.ultimaNotificacao || '-'}</td>
+      <td>${r.resposta === 'Sim' ? '<span class="check">✓ Sim</span>' : '<span class="cross">✗ Não</span>'}</td>
+      <td>${r.reincidente ? '<span class="reincidente">⚠ Reincidente</span> ' : ''}${r.observacao || '-'}</td>
+    </tr>`).join('');
+  container.innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Agressor</th><th>Termos Atingidos</th><th>Concorrente (Leilão)</th>
+        <th>Notificações Enviadas</th><th>Última Notificação</th><th>Resposta</th><th>Observação</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+async function analyze() {
   const token = document.getElementById('token').value.trim();
-  const links = document.getElementById('cardLinks').value.trim();
+  const cardsRaw = document.getElementById('cards').value.trim();
   showError('');
 
-  if (!token) { showError('Informe seu token do Pipefy.'); return; }
-  if (!links) { showError('Informe ao menos um link ou ID de card.'); return; }
+  if (!token) return showError('Cole seu token do Pipefy.');
+  if (!cardsRaw) return showError('Cole pelo menos um link de card.');
 
-  const lines = links.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 10);
-  if (!lines.length) { showError('Nenhum link válido encontrado.'); return; }
-
-  const btn = document.getElementById('analyzeBtn');
+  const lines = cardsRaw.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 10);
+  const btn = document.getElementById('btn-analyze');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spin">⟳</span>&nbsp;Analisando...';
-  document.getElementById('statusDot').style.background = '#ffb830';
-  document.getElementById('tableArea').innerHTML = '<div class="empty"><span class="spin" style="font-size:22px;">⟳</span><br><br>Buscando dados no Pipefy...</div>';
-  document.getElementById('tableFooter').style.display = 'none';
+  btn.innerHTML = '<span class="loading"></span> Analisando...';
+  document.getElementById('status-dot').classList.add('active');
 
-  let cards = [], errors = [];
   for (const line of lines) {
-    const id = extractCardId(line);
-    if (!id) { errors.push(`ID inválido: ${line}`); continue; }
-    try { cards.push(await fetchCard(token, id)); }
-    catch (e) { errors.push(`Card ${id}: ${e.message}`); }
-  }
-
-  if (!cards.length) {
-    showError('Não foi possível buscar nenhum card.<br>' + errors.join('<br>'));
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Iniciar Análise em Massa';
-    document.getElementById('statusDot').style.background = '#ff4d6d';
-    document.getElementById('tableArea').innerHTML = '<div class="empty">Nenhum card analisado.</div>';
-    return;
-  }
-
-  document.getElementById('tableArea').innerHTML = '<div class="empty"><span class="spin" style="font-size:22px;">⟳</span><br><br>Gerando análise com IA...</div>';
-
-  const cardsJson = JSON.stringify(cards, null, 2);
-  analysisContext = cardsJson;
-  chatHistory = [];
-
-  try {
-    const prompt = `${SYSTEM_PROMPT}\n\nDados dos cards:\n${cardsJson}`;
-    const text = await callGemini(prompt, null, null);
-    const clean = text.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
-    tableData = parsed.rows || [];
-    renderTable(tableData);
-    document.getElementById('statusDot').style.background = '#00e5a0';
-    document.getElementById('badgeLabel').textContent = 'AGRESSORES: PRINCIPAIS';
-    document.getElementById('tableFooter').style.display = 'block';
-    if (errors.length) showError('Atenção: alguns cards falharam:<br>' + errors.join('<br>'));
-  } catch (e) {
-    showError('Erro ao gerar análise: ' + e.message);
-    document.getElementById('statusDot').style.background = '#ff4d6d';
-    document.getElementById('tableArea').innerHTML = '<div class="empty">Erro ao processar análise.</div>';
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Iniciar Análise em Massa';
-}
-
-function renderTable(rows) {
-  if (!rows || !rows.length) {
-    document.getElementById('tableArea').innerHTML = '<div class="empty">Nenhuma linha gerada.</div>';
-    return;
-  }
-  const cols = ['Agressor','Termos atingidos','Concorrente (Leilão)','Notificações Enviadas','Última Notificação','Resposta','Observação'];
-  let html = '<div class="table-wrap"><table><thead><tr>';
-  cols.forEach(c => html += `<th>${c}</th>`);
-  html += '</tr></thead><tbody>';
-  rows.forEach(r => {
-    const notif = (r.notificacoes > 10) ? '+10' : (r.notificacoes ?? '—');
-    html += `<tr>
-      <td style="font-weight:500;white-space:nowrap;">${r.agressor || '—'}</td>
-      <td style="color:var(--muted);font-size:11px;"></td>
-      <td style="text-align:center;">${r.concorrente ? '<span class="icon-check">✓</span>' : '<span class="icon-x">✕</span>'}</td>
-      <td style="text-align:center;">${notif}</td>
-      <td style="white-space:nowrap;">${r.ultimaNotificacao || r.ultimaComunicacao || '—'}</td>
-      <td style="text-align:center;">${r.resposta || r.retorno ? '<span class="icon-check">✓</span>' : '<span class="icon-x">✕</span>'}</td>
-      <td class="obs-cell">${r.observacao || '—'}</td>
-    </tr>`;
-  });
-  html += '</tbody></table></div>';
-  document.getElementById('tableArea').innerHTML = html;
-}
-
-function copyTable() {
-  if (!tableData.length) { alert('Analise um card primeiro.'); return; }
-  const cols = ['Agressor','Termos atingidos','Concorrente (Leilão)','Notificações Enviadas','Última Notificação','Resposta','Observação'];
-  let text = cols.join('\t') + '\n';
-  tableData.forEach(r => {
-    const notif = (r.notificacoes > 10) ? '+10' : (r.notificacoes ?? '');
-    text += [r.agressor, '', r.concorrente ? 'Sim' : 'Não', notif, r.ultimaNotificacao || r.ultimaComunicacao, r.resposta || r.retorno ? 'Sim' : 'Não', r.observacao].join('\t') + '\n';
-  });
-  navigator.clipboard.writeText(text)
-    .then(() => alert('Tabela copiada! Cole no Excel ou Google Sheets.'))
-    .catch(() => alert('Não foi possível copiar automaticamente.'));
-}
-
-function copyTablePPT() {
-  if (!tableData.length) { alert('Analise um card primeiro.'); return; }
-
-  // Cores do estilo da apresentação
-  const headerBg = '#00897b';
-  const headerColor = '#ffffff';
-  const rowEvenBg = '#ffffff';
-  const rowOddBg = '#f5fafa';
-  const textColor = '#1a1a2e';
-  const accentColor = '#00897b';
-
-  const cols = ['Agressor','Termos atingidos','Concorrente (Leilão)','Notificações Enviadas','Última Notificação','Resposta','Observação'];
-
-  let html = `<table style="border-collapse:collapse;width:100%;font-family:Arial,sans-serif;font-size:12px;">`;
-
-  // Header
-  html += '<thead><tr>';
-  cols.forEach(c => {
-    html += `<th style="background:${headerBg};color:${headerColor};padding:8px 10px;text-align:left;font-weight:600;font-size:11px;border:none;">${c}</th>`;
-  });
-  html += '</tr></thead><tbody>';
-
-  // Rows
-  tableData.forEach((r, i) => {
-    const bg = i % 2 === 0 ? rowEvenBg : rowOddBg;
-    const notif = (r.notificacoes > 10) ? '+10' : (r.notificacoes ?? '—');
-    const concorrente = r.concorrente ? '✓' : '✕';
-    const concorrenteColor = r.concorrente ? '#00897b' : '#e53935';
-    const resposta = (r.resposta || r.retorno) ? '✓' : '✕';
-    const respostaColor = (r.resposta || r.retorno) ? '#00897b' : '#e53935';
-
-    html += `<tr style="background:${bg};">
-      <td style="padding:8px 10px;color:${textColor};font-weight:500;border-bottom:1px solid #e0f2f1;">${r.agressor || '—'}</td>
-      <td style="padding:8px 10px;color:#999;border-bottom:1px solid #e0f2f1;"></td>
-      <td style="padding:8px 10px;text-align:center;color:${concorrenteColor};font-weight:700;font-size:14px;border-bottom:1px solid #e0f2f1;">${concorrente}</td>
-      <td style="padding:8px 10px;text-align:center;color:${textColor};border-bottom:1px solid #e0f2f1;">${notif}</td>
-      <td style="padding:8px 10px;color:${textColor};border-bottom:1px solid #e0f2f1;">${r.ultimaNotificacao || r.ultimaComunicacao || '—'}</td>
-      <td style="padding:8px 10px;text-align:center;color:${respostaColor};font-weight:700;font-size:14px;border-bottom:1px solid #e0f2f1;">${resposta}</td>
-      <td style="padding:8px 10px;color:#555;font-size:11px;border-bottom:1px solid #e0f2f1;">${r.observacao || '—'}</td>
-    </tr>`;
-  });
-
-  html += '</tbody></table>';
-
-  // Copy as HTML so Google Slides interprets it as a table
-  const blob = new Blob([html], { type: 'text/html' });
-  const item = new ClipboardItem({ 'text/html': blob });
-  navigator.clipboard.write([item])
-    .then(() => alert('Tabela copiada! Agora cole (Ctrl+V) direto no Google Slides.'))
-    .catch(() => {
-      // Fallback: copy as plain text
-      const cols2 = ['Agressor','Termos atingidos','Concorrente (Leilão)','Notificações Enviadas','Última Notificação','Resposta','Observação'];
-      let text = cols2.join('\t') + '\n';
-      tableData.forEach(r => {
-        const notif2 = (r.notificacoes > 10) ? '+10' : (r.notificacoes ?? '');
-        text += [r.agressor, '', r.concorrente ? '✓' : '✕', notif2, r.ultimaNotificacao || r.ultimaComunicacao, (r.resposta || r.retorno) ? '✓' : '✕', r.observacao].join('\t') + '\n';
-      });
-      navigator.clipboard.writeText(text).then(() => alert('Tabela copiada em texto! Cole no Google Slides.'));
-    });
-}
-
-async function sendChat() {
-  const inp = document.getElementById('chatInput');
-  const msg = inp.value.trim();
-  if (!msg) return;
-  if (!analysisContext) { addMsg('ai', 'Analise ao menos um card primeiro para poder fazer perguntas.'); return; }
-  inp.value = '';
-  addMsg('user', msg);
-  chatHistory.push({ role: 'user', content: msg });
-  const sendBtn = document.getElementById('sendBtn');
-  sendBtn.disabled = true;
-  const typing = addMsg('ai', 'Digitando...', true);
-
-  const sysPrompt = `Você é um assistente especializado nas tratativas de violação de marca no Pipefy. Responda sempre em português de forma objetiva e concisa.\n\nDados dos cards analisados:\n${analysisContext}`;
-
-  // Para o chat, monta o histórico com o contexto na primeira mensagem
-  const fullHistory = [];
-  for (let i = 0; i < chatHistory.length; i++) {
-    const h = chatHistory[i];
-    if (i === 0) {
-      fullHistory.push({ role: 'user', content: sysPrompt + '\n\nPergunta: ' + h.content });
-    } else {
-      fullHistory.push(h);
+    const cardId = extractCardId(line);
+    try {
+      btn.innerHTML = `<span class="loading"></span> Buscando card ${cardId}...`;
+      const card = await fetchCard(cardId, token);
+      if (!card) { showError(`Card ${cardId} não encontrado.`); continue; }
+      btn.innerHTML = `<span class="loading"></span> Analisando ${card.title}...`;
+      const result = await analyzeCard(card);
+      const existing = analysisData.findIndex(r => r.agressor === result.agressor);
+      if (existing >= 0) analysisData[existing] = result;
+      else analysisData.push(result);
+      renderTable();
+      chatHistory = [{ role: 'system', content: `Dados analisados: ${JSON.stringify(analysisData)}` }];
+    } catch(e) {
+      showError(`Erro no card ${cardId}: ${e.message}`);
     }
   }
 
-  try {
-    const reply = await callGemini(msg, null, fullHistory);
-    chatHistory.push({ role: 'assistant', content: reply });
-    typing.textContent = reply;
-    typing.classList.remove('typing');
-  } catch (e) {
-    typing.textContent = 'Erro: ' + e.message;
-  }
-  sendBtn.disabled = false;
+  btn.disabled = false;
+  btn.innerHTML = '<span>⚡</span> Iniciar Análise em Massa';
+  document.getElementById('status-dot').classList.remove('active');
 }
 
-function addMsg(role, text, isTyping = false) {
-  const container = document.getElementById('chatMessages');
-  container.querySelectorAll('div[style*="text-align:center"]').forEach(e => e.remove());
-  const el = document.createElement('div');
-  el.className = `msg ${role}${isTyping ? ' typing' : ''}`;
-  el.textContent = text;
-  container.appendChild(el);
+function addMessage(role, text) {
+  const container = document.getElementById('chat-messages');
+  const empties = container.querySelectorAll('.empty-state');
+  empties.forEach(e => e.remove());
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `
+    <div class="msg-avatar ${role === 'user' ? 'user' : 'ai'}">${role === 'user' ? '👤' : '🤖'}</div>
+    <div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+  container.appendChild(div);
   container.scrollTop = container.scrollHeight;
-  return el;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  addMessage('user', msg);
+
+  if (!chatHistory.length) chatHistory.push({ role: 'system', content: `Você é um assistente da Branddi. ${analysisData.length ? 'Dados: ' + JSON.stringify(analysisData) : 'Nenhum card analisado ainda.'}` });
+  chatHistory.push({ role: 'user', content: msg });
+
+  const typing = document.createElement('div');
+  typing.className = 'msg';
+  typing.innerHTML = '<div class="msg-avatar ai">🤖</div><div class="msg-bubble"><span class="loading"></span></div>';
+  document.getElementById('chat-messages').appendChild(typing);
+
+  try {
+    const reply = await callGemini(chatHistory);
+    typing.remove();
+    addMessage('assistant', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    typing.remove();
+    addMessage('assistant', 'Erro: ' + e.message);
+  }
+}
+
+function copyTable() {
+  if (!analysisData.length) return alert('Nenhum dado para copiar.');
+  const header = ['Agressor', 'Termos Atingidos', 'Concorrente (Leilão)', 'Notificações', 'Última Notificação', 'Resposta', 'Observação'].join('\t');
+  const rows = analysisData.map(r => [r.agressor, '', r.concorrente, r.notificacoes, r.ultimaNotificacao, r.resposta, (r.reincidente ? 'Agressor reincidente. ' : '') + r.observacao].join('\t'));
+  navigator.clipboard.writeText([header, ...rows].join('\n')).then(() => alert('Tabela copiada!'));
+}
+
+function copyForSlides() {
+  if (!analysisData.length) return alert('Nenhum dado para copiar.');
+  const html = `<table border="1" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px">
+    <tr style="background:#00c07f;color:#000;font-weight:bold">
+      <td style="padding:8px">Agressor</td>
+      <td style="padding:8px">Termos Atingidos</td>
+      <td style="padding:8px">Concorrente (Leilão)</td>
+      <td style="padding:8px">Notificações</td>
+      <td style="padding:8px">Última Notificação</td>
+      <td style="padding:8px">Resposta</td>
+      <td style="padding:8px">Observação</td>
+    </tr>
+    ${analysisData.map(r => `<tr>
+      <td style="padding:8px">${r.agressor}</td>
+      <td style="padding:8px"></td>
+      <td style="padding:8px;text-align:center">${r.concorrente === 'Sim' ? '✓' : '✗'}</td>
+      <td style="padding:8px;text-align:center">${r.notificacoes}</td>
+      <td style="padding:8px">${r.ultimaNotificacao}</td>
+      <td style="padding:8px;text-align:center">${r.resposta}</td>
+      <td style="padding:8px">${r.reincidente ? 'Agressor reincidente. ' : ''}${r.observacao}</td>
+    </tr>`).join('')}
+  </table>`;
+  const blob = new Blob([html], { type: 'text/html' });
+  const item = new ClipboardItem({ 'text/html': blob });
+  navigator.clipboard.write([item]).then(() => alert('Tabela copiada para Slides!'));
 }
 </script>
 </body>

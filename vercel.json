@@ -1,1 +1,6 @@
-{}
+{
+  "functions": {
+    "api/gemini.js": { "runtime": "nodejs18.x" },
+    "api/pipefy.js": { "runtime": "nodejs18.x" }
+  }
+}
